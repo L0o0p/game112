@@ -5,6 +5,8 @@ import { Time } from '../utils/Time';
 import { Entity } from './Entity';
 import { PlayerController } from '../components/PlayerController';
 import { CameraController } from '../components/CameraController';
+import { ResourceManager } from './ResourceManager';
+import { PI } from 'three/tsl';
 
 export class Game {
     constructor() {
@@ -70,7 +72,7 @@ export class Game {
         return obstacle;
     }
 
-    setupScene() {
+    async setupScene() {
                 // 添加网格地面作为参考
                 const gridHelper = new THREE.GridHelper(20, 20);
                 this.scene.add(gridHelper);
@@ -91,20 +93,36 @@ export class Game {
 
          // 创建玩家实体
          const playerEntity = new Entity();
-        
-         // 创建玩家的3D模型
-         const geometry = new THREE.BoxGeometry();
-         const material = new THREE.MeshStandardMaterial({ 
-             color: 0x00ff00,
-             metalness: 0.5,
-             roughness: 0.5
-         });
-         const playerMesh = new THREE.Mesh(geometry, material);
-         this.scene.add(playerMesh);
+         const resourcesLoader = new ResourceManager()
+        const  model = await resourcesLoader.loadGLTF('/models/Alien.glb')
+        const playerMesh = model.scene.children[0]
+        // .rotateY(3.14)
+        const playerAnimations = model.animations
+        console.log('animations',playerAnimations);
+        const player = {playerMesh,playerAnimations}
+        // 设置模型的阴影
+    playerMesh.traverse((child) => {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+        //  // 创建玩家的3D模型
+        //  const geometry = new THREE.BoxGeometry();
+        //  const material = new THREE.MeshStandardMaterial({ 
+        //      color: 0x00ff00,
+        //      metalness: 0.5,
+        //      roughness: 0.5
+        //  });
+        //  const playerMesh = new THREE.Mesh(geometry, material);
+        // this.scene.add(playerMesh);
+
+        this.scene.add(playerMesh);
+
         // 将玩家添加到碰撞系统
         this.collisionSystem.addCollider(playerMesh);
          // 添加玩家控制器组件
-         playerEntity.addComponent(new PlayerController(playerMesh));
+         playerEntity.addComponent(new PlayerController(player));
                  // 创建相机实体
         const cameraEntity = new Entity();
         
@@ -137,6 +155,18 @@ export class Game {
         // 西墙
         this.createObstacle(-wallSize/2, wallHeight/2, 0, 
             wallThickness, wallHeight, wallSize);
+
+              // 创建实际的地面
+    const groundGeometry = new THREE.PlaneGeometry(20, 20);
+    const groundMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x808080,
+        roughness: 0.8,
+        metalness: 0.2
+    });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    this.scene.add(ground);
     }
 
     update() {
