@@ -36,4 +36,11 @@ export class ResourceManager {
         this.loadingPromises.set(url, loadPromise);
         return loadPromise;
     }
+    async getModelInstance(url) {
+        const baseModel = await this.loadGLTF(url);
+        return {
+            scene: baseModel.scene.clone(true),
+            animations: baseModel.animations
+        };
+    }
 }
