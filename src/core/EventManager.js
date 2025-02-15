@@ -25,7 +25,7 @@ export class EventManager {
     }
 
     emit(topic, data) {
-        console.log(`Emitting event: ${topic}`, data);
+        // console.log(`Emitting event: ${topic}`, data);
         const handlers = this._handlers.get(topic);
         if (handlers) {
             console.log(`Found ${handlers.size} handlers for ${topic}`);
@@ -37,7 +37,7 @@ export class EventManager {
                 }
             });
         } else {
-            console.log(`No handlers found for topic: ${topic}`);
+            // console.log(`No handlers found for topic: ${topic}`);
         }
     }
 }

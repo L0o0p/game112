@@ -1,3 +1,5 @@
+import { Component } from "./Component";
+
 // src/components/CameraController.js
 import * as THREE from 'three'
 export class CameraController {

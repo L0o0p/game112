@@ -138,22 +138,13 @@ export class Game {
                 child.receiveShadow = true;
             }
         });
-        //  // 创建玩家的3D模型
-        //  const geometry = new THREE.BoxGeometry();
-        //  const material = new THREE.MeshStandardMaterial({ 
-        //      color: 0x00ff00,
-        //      metalness: 0.5,
-        //      roughness: 0.5
-        //  });
-        //  const playerMesh = new THREE.Mesh(geometry, material);
-        // this.scene.add(playerMesh);
 
         this.scene.add(playerMesh);
 
         // 将玩家添加到碰撞系统
         this.collisionSystem.addCollider(playerMesh);
         // 添加玩家控制器组件
-        playerEntity.addComponent(new Player(playerMesh, playerAnimations));
+        playerEntity.addComponent(new Player(playerMesh, playerAnimations))
         // 创建相机实体
         const cameraEntity = new Entity();
 

@@ -1,0 +1,39 @@
+src/
+│
+├── core/                   # 核心系统
+│   ├── Engine.js          # 游戏引擎
+│   ├── Input.js           # 输入系统
+│   ├── EventEmitter.js    # 事件系统
+│   └── ResourceLoader.js  # 资源加载器
+│
+├── entities/              # 实体相关
+│   ├── Entity.js         # 基础实体类
+│   ├── Character.js      # 角色基类
+│   ├── Player.js         # 玩家类
+│   └── Enemy.js          # 敌人类
+│
+├── states/               # 状态系统
+│   ├── StateMachine.js   # 状态机基类
+│   ├── character/        # 角色状态
+│   │   ├── State.js     # 状态基类
+│   │   ├── IdleState.js
+│   │   ├── WalkState.js
+│   │   ├── AttackState.js
+│   │   └── DeathState.js
+│   └── effects/         # 效果状态
+│       ├── EffectManager.js
+│       └── effects.js   # 各种效果的定义
+│
+├── components/          # 组件系统
+│   ├── Component.js    # 组件基类
+│   ├── Transform.js    # 变换组件
+│   ├── Animator.js     # 动画组件
+│   ├── Health.js       # 生命值组件
+│   └── Combat.js       # 战斗组件
+│
+├── systems/            # 游戏系统
+│   ├── AnimationSystem.js
+│   ├── PhysicsSystem.js
+│   └── CombatSystem.js
+│
+└── main.js            # 入口文件
