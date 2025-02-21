@@ -38,22 +38,22 @@ export class InputComponent extends Component {
     }
 
     getMoveDirection() {
-        const direction = new THREE.Vector3();
-
-        if (this.isActionPressed('forward')) direction.z -= 1;
-        if (this.isActionPressed('backward')) direction.z += 1;
-        if (this.isActionPressed('left')) direction.x -= 1;
-        if (this.isActionPressed('right')) direction.x += 1;
-
-        if (direction.lengthSq() > 0) {
-            direction.normalize();
+        this.moveDirection.set(0, 0, 0);
+        
+        if (this.keys.has(this.controls.forward)) this.moveDirection.z -= 1;
+        if (this.keys.has(this.controls.backward)) this.moveDirection.z += 1;
+        if (this.keys.has(this.controls.left)) this.moveDirection.x -= 1;
+        if (this.keys.has(this.controls.right)) this.moveDirection.x += 1;
+        
+        if (this.moveDirection.lengthSq() > 0) {
+            this.moveDirection.normalize();
         }
 
-        return direction;
-    }
-
-    onRemove() {
-        window.removeEventListener('keydown', this.boundKeyDown);
-        window.removeEventListener('keyup', this.boundKeyUp);
+        // 打印移动方向
+        if (this.moveDirection.lengthSq() > 0) {
+            console.log('Move direction:', this.moveDirection.toArray());
+        }
+        
+        return this.moveDirection;
     }
 }

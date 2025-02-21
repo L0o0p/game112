@@ -67,7 +67,9 @@ export class AIComponent extends Component {
             to: name
         });
     }
-
+    getTarget() {
+        return this.target;
+    }
     // 目标管理
     setTarget(target) {
         this.currentTarget = target;

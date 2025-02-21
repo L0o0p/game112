@@ -17,23 +17,9 @@ export class AnimatorComponent extends Component {
         }
     }
 
-    // initAnimations(animations) {
-    //     const X = Object.entries(animations)
-    //     console.log('Xanimations',X);
-        
-    //     for (const [name, clip] of Object.entries(animations)) {
-    //     console.log('name',name);
-    //     console.log('clip',clip);
-    //     const action = this.mixer.clipAction(clip);
-    //         this.animations.set(name, {
-    //             clip,
-    //             action
-    //         });
-    //     }
-        
-    // }
-
     initAnimations(animationClips) {
+        console.log('animationClipsX',animationClips);
+        
         animationClips.forEach(clip => {
             // 移除 "_Armature" 后缀，使动画名称更简洁
             const name = clip.name.replace('_Armature', '');
@@ -59,7 +45,7 @@ export class AnimatorComponent extends Component {
         if (this.currentAction) {
             this.currentAction.fadeOut(crossFadeTime);
         }
-
+ 
         newAction.reset()
             .setEffectiveTimeScale(1)
             .setEffectiveWeight(1)
@@ -73,9 +59,10 @@ export class AnimatorComponent extends Component {
         if (!this.animations.has(name)) return;
 
         const animation = this.animations.get(name);
-        const action = animation.action;
+        // const action = animation.action;
+        console.log('animation',animation);
 
-        action.reset()
+        animation.reset()
             .setLoop(THREE.LoopOnce, 1)
             .setEffectiveTimeScale(1)
             .setEffectiveWeight(1)
@@ -84,7 +71,7 @@ export class AnimatorComponent extends Component {
         if (onComplete) {
             const mixer = this.mixer;
             const id = mixer.addEventListener('finished', function onFinish(e) {
-                if (e.action === action) {
+                if (e.animation === animation) {
                     onComplete();
                     mixer.removeEventListener('finished', onFinish);
                 }

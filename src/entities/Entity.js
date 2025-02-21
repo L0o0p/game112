@@ -1,4 +1,5 @@
 import { EventManager } from '../core/EventManager'
+import * as THREE from 'three'
 
 export class Entity {
     constructor() {
@@ -11,8 +12,10 @@ export class Entity {
         this.tags = new Set(); // 用于实体标签化分类
 
         // Transform数据（可以后续移到TransformComponent中）
-        this.position = { x: 0, y: 0, z: 0 };
-        this.rotation = { x: 0, y: 0, z: 0 };
+        // this.position = { x: 0, y: 0, z: 0 };
+        // this.rotation = { x: 0, y: 0, z: 0 };
+        this.position = new THREE.Vector3();
+        this.rotation = new THREE.Euler();
         this.scale = { x: 1, y: 1, z: 1 };
 
         // 渲染相关
@@ -22,19 +25,34 @@ export class Entity {
 
     // Mesh相关方法
     setMesh(mesh) {
+        if (!mesh) {
+            console.error('Attempting to set null mesh');
+            return;
+        }
         this.mesh = mesh;
-        // 更新mesh的位置等属性
-        this.updateMeshTransform();
+        console.log('Entity mesh set:', {
+            meshType: mesh.type,
+            position: mesh.position.toArray()
+        });
+    }
+
+    getMesh() {
+        return this.mesh;
     }
 
     updateMeshTransform() {
+        // if (this.mesh) {
+        //     this.mesh.position.set(
+        //         this.position.x,
+        //         this.position.y,
+        //         this.position.z
+        //     );
+        //     // 可以添加rotation和scale的更新
+        // }
         if (this.mesh) {
-            this.mesh.position.set(
-                this.position.x,
-                this.position.y,
-                this.position.z
-            );
-            // 可以添加rotation和scale的更新
+            // 改变更新方向：从mesh更新到entity，而不是反向
+            this.position.copy(this.mesh.position);
+            this.rotation.copy(this.mesh.rotation);
         }
     }
     // 注册事件处理器的方法
@@ -51,7 +69,7 @@ export class Entity {
 
     addComponent(component) {
         this.components.set(component.constructor.name, component);
-        this.mesh = component.mesh
+        // this.mesh = component.mesh
         component.entity = this;
         if (component.onAdd) {
             component.onAdd();

@@ -5,6 +5,7 @@ import { Component } from './Component';
 export class MovementComponent extends Component {
     constructor(params = {}) {
         super();
+        this.mesh = params.mesh;
         this.speed = params.speed || 5;
         this.rotationSpeed = params.rotationSpeed || 10;
         this.knockbackResistance = params.knockbackResistance || 0;
@@ -46,27 +47,36 @@ export class MovementComponent extends Component {
 
     // components/MovementComponent.js
     move(direction, deltaTime) {
-        if (!this.entity?.mesh || this.isKnockedBack) return false;
+        if (!this.entity?.mesh) {
+            console.error('Movement failed: No mesh available');
+            return false;
+        }
 
-        // 使用传入的方向而不是内部的moveDirection
         if (direction.lengthSq() > 0) {
-            // 计算目标旋转角度
+            const mesh = this.entity.mesh;
+            
+            // 计算移动向量
+            const moveVector = direction.clone()
+                .normalize()
+                .multiplyScalar(this.speed * deltaTime);
+
+            // 更新位置 - 使用更直接的方式
+            mesh.position.x += moveVector.x;
+            mesh.position.z += moveVector.z;
+            
+            // 更新旋转
             this.targetRotation = Math.atan2(direction.x, direction.z);
+            mesh.rotation.y = this.targetRotation;
 
-            // 当前旋转角度
-            let currentRotation = this.entity.mesh.rotation.y;
-            let rotationDiff = this.targetRotation - currentRotation;
-
-            // 确保旋转差值在 -PI 到 PI 之间
-            if (rotationDiff > Math.PI) rotationDiff -= Math.PI * 2;
-            if (rotationDiff < -Math.PI) rotationDiff += Math.PI * 2;
-
-            // 应用旋转
-            this.entity.mesh.rotation.y += rotationDiff * this.rotationSpeed * deltaTime;
-
-            // 应用移动
-            const moveVector = direction.normalize().multiplyScalar(this.speed * deltaTime);
-            this.entity.mesh.position.add(moveVector);
+            // 打印详细的移动信息
+            console.log('Movement details:', {
+                moveVector: moveVector.toArray(),
+                speed: this.speed,
+                deltaTime: deltaTime,
+                direction: direction.toArray(),
+                newPosition: mesh.position.toArray(),
+                actualMoveDistance: moveVector.length()
+            });
 
             return true;
         }

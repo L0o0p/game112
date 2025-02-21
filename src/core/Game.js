@@ -7,7 +7,7 @@ import { Player } from '../entities/Player.js';
 import { CameraController } from '../components/CameraController';
 import { ResourceManager } from './ResourceManager';
 import { CombatSystem } from '../systems/CombatSystem.js'
-import {  Enemy } from '../entities/Enemy.js';
+import { Enemy } from '../entities/Enemy.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 export class Game {
@@ -117,14 +117,14 @@ export class Game {
         // this.scene.add(this.cube);
 
         // 创建玩家实体
-        const playerEntity = new Entity();
+        // const playerEntity = new Entity();
         const resourcesLoader = new ResourceManager()
         const model = await resourcesLoader.loadGLTF('/models/gamelike.glb')
         console.log('model', model);
 
         console.log('Available animations:', model.animations.map(a => a.name));
         const playerMesh = model.scene.children[0]
-            .rotateY(3.14)
+            // .rotateY(3.14)
         console.log('playerMesh', playerMesh);
         // 标记这是玩家模型
         playerMesh.userData.isPlayer = true;
@@ -143,8 +143,8 @@ export class Game {
 
         // 将玩家添加到碰撞系统
         this.collisionSystem.addCollider(playerMesh);
-        // 添加玩家控制器组件
-        playerEntity.addComponent(new Player(playerMesh, playerAnimations))
+        // 直接创建Player实例
+        const playerEntity = new Player(playerMesh, model.animations);
         // 创建相机实体
         const cameraEntity = new Entity();
 
@@ -195,13 +195,13 @@ export class Game {
         this.scene.add(this.combatSystem.debugMesh);
 
         // 加载敌人模型
-        const enemyEntity = new Entity();
         const loader = new GLTFLoader();
         const enemyModel = await loader.loadAsync('/models/gamelike.glb');
         const enemyMesh = enemyModel.scene.children[0]
         const enemyAnimations = enemyModel.animations
         const position = new THREE.Vector3(2, 0, -5);
-        enemyEntity.addComponent(new Enemy(enemyMesh, enemyAnimations, position));
+        const enemyEntity = new Enemy(enemyMesh, enemyAnimations, position)
+        // enemyEntity.position.set()
 
         // 将敌人添加到碰撞系统
         this.collisionSystem.addCollider(enemyMesh);
@@ -231,7 +231,7 @@ export class Game {
         enemyEntity.on('player.attack', (msg) => {
             console.log('Enemy under attack!', msg);
             this.combatSystem.handleAttack(msg);
-            enemyEntity.takeDamage()
+            // enemyEntity.takeDamage()
         });
 
         // 玩家监听敌人的攻击（如果需要的话）
